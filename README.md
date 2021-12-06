@@ -14,7 +14,7 @@
 
 
 ### 什么是Redis?
-Redis(Remote Dictionary Server),即远程字典服务,是C语言编写开源的，可基于内存亦可持久化的日志型，key-value数据库。
+Redis(Remote Dictionary Server),即远程字典服务,是C语言编写开源的，支持网络，可基于内存亦可持久化的日志型，key-value数据库，支持多语言API。
 
 ### Redis能干嘛?
 1. 内存存储，持久化，内存中是断电即失，所以需要持久化(rdb,aof)
