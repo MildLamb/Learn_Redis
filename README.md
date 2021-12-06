@@ -1,6 +1,18 @@
 # Learn_Redis
 学习Redis
 
+# NoSQL四大分类
+- KV键值对
+- 文档型数据库
+  - MongoDB
+  - ConthDB
+- 列存储数据库
+  - HBase
+  - 分布式文件系统
+- 图关系数据库
+  - Neo4j
+
+
 ### 什么是Redis?
 Redis(Remote Dictionary Server),即远程字典服务,是C语言编写开源的，可基于内存亦可持久化的日志型，key-value数据库。
 
