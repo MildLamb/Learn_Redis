@@ -30,7 +30,7 @@ Redis(Remote Dictionary Server),即远程字典服务,是C语言编写开源的�
 3. 集群
 4. 事务
 
-### Redis安装
+# Redis安装
 1. 下载安装包
 2. 解压Redis的安装包  建议移动到opt目录下  mv redis-5.0.13.tar.gz /opt
 3. 进入解压后的文件，可以看到redis的配置文件
