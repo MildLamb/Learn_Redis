@@ -32,43 +32,57 @@ Redis(Remote Dictionary Server),即远程字典服务,是C语言编写开源的�
 
 # Redis安装
 1. 下载安装包
-2. 解压Redis的安装包  建议移动到opt目录下  mv redis-5.0.13.tar.gz /opt
+2. 解压Redis的安装包  建议移动到opt目录下  mv redis-6.0.6.tar.gz /opt
 3. 进入解压后的文件，可以看到redis的配置文件
 4. 基本环境安装  要进入redis文件中
+  - 目前最新版本已经是6.0.8了。,make命令报error，安装Redis6以上需要gcc版本在7以上
+  - 运行下面命令升级gcc
+  - #第一步
+  - sudo yum install centos-release-scl
+  - #第二步
+  - sudo yum install devtoolset-7-gcc*
+  - #第三步
+  - scl enable devtoolset-7 bash
 ```bash
-[root@EngulfMissing redis-5.0.13]# yum install gcc-c++
+[root@EngulfMissing redis-6.0.6]# yum install gcc-c++
 
-[root@EngulfMissing redis-5.0.13]# make
+[root@EngulfMissing redis-6.0.6]# make
 
-[root@EngulfMissing redis-5.0.13]# make install
+[root@EngulfMissing redis-6.0.6]# make install
 ```
-5. redis的默认安装路径 /usr/local/bin
+5. redis的默认安装路径 /usr/local/bin，redis-cli，redis-server都在这个目录里面
 6. 将redis配置文件，复制到我们当前目录下
 ```bash
 [root@EngulfMissing bin]# mkdir rconfig
-[root@EngulfMissing bin]# cp /opt/redis-5.0.13/redis.conf rconfig   # 这里的bin是/usr/local/bin
+[root@EngulfMissing bin]# cp /opt/redis-6.0.6/redis.conf rconfig   # 这里的bin是/usr/local/bin
 ```
-7. redis默认不是后台启动的，修改配置文件,将redis.conf中的  daemonize改为yes
+7. redis默认不是后台启动的，修改配置文件,将redis.conf中的  daemonize属性改为yes  
+如果是云服务器建议为redis设置密码，不然有被黑客拿去挖矿的可能   修改redis.conf里面的requirepass属性，默认是关闭的
 ```bash
 [root@EngulfMissing rconfig]# vim redis.conf
 ```
-8. 启动redis服务，在/usr/local/bin目录下启动redis服务
+8. 启动redis服务，在/usr/local/bin目录下启动redis服务，通过指定的配置文件启动
 ```bash
 [root@EngulfMissing bin]# pwd
 /usr/local/bin
-[root@EngulfMissing bin]# redis-server rconfig/redis.conf
+[root@EngulfMissing bin]# redis-server myconfig/redis.conf
 ```
-9. 使用redis-cli 连接指定端口号测试
+9. 使用redis-cli 连接指定端口号测试，由于设置了密码，还需要密码验证
 ```bash
-[root@EngulfMissing bin]# redis-cli -p 6379
+[root@VM-16-14-centos bin]# redis-cli -p 6379
+127.0.0.1:6379> ping
+(error) NOAUTH Authentication required.  
+127.0.0.1:6379> auth myredispassword
+OK
 127.0.0.1:6379> ping
 PONG
-127.0.0.1:6379> set name Mild.Lamb
+127.0.0.1:6379> set name mildlamb
 OK
 127.0.0.1:6379> get name
-"Mild.Lamb"
+"mildlamb"
 127.0.0.1:6379> keys *
 1) "name"
+127.0.0.1:6379> 
 ```
 10. 查看redis进程是否开启
 ```bash
