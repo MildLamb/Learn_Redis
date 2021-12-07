@@ -4,6 +4,8 @@
 - 移动指定key： move key dbid
 - 设定key的到期时间：expire keyname second
 - 查看key的到期时间：ttl keyname
+- 获取key对应的value： get keyname
+- 查看key对应的类型： type keyname
 
 ```bash
 127.0.0.1:6379> set name mildlamb
@@ -41,5 +43,8 @@ OK
 (integer) 1
 127.0.0.1:6379> ttl name
 (integer) 16
-127.0.0.1:6379> 
+127.0.0.1:6379> set name mildlamb
+OK
+127.0.0.1:6379> type name
+string
 ```
