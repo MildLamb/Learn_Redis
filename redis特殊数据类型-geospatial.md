@@ -4,7 +4,7 @@
   - 将指定的地理空间位置（经度、纬度、名称）添加到指定的key中
   - 有效的经度从-180度到180度
   - 有效的纬度从-85.05112878度到85.05112878度
-- geohash
+- geohash，将地理位置返回为11个字符的Geohash字符串：geohash keyname 位置名称1 位置名称2 ...
 - geopos，获取某一个地理位置的经纬度：geopos keyname 位置名称
 - geodist，返回两个位置的直线距离：geodist keyname 位置1 位置2 单位
   - m 表示单位为米
@@ -56,4 +56,7 @@
 127.0.0.1:6379> georadiusbymember china:city beijin 1000 km  # 和georadius差不多，但中心点是键中的成员
 1) "beijin"
 2) "xian"
+127.0.0.1:6379> geohash china:city  shanghai beijin   # 将地理位置返回为11个字符的Geohash字符串,字符串越像，地理位置就越接近
+1) "wtw3sj5zbj0"
+2) "wx4fbxxfke0"
 ```
