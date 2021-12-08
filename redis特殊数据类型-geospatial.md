@@ -1,4 +1,4 @@
-# geospatial 地理位置
+# geospatial 地理位置，底层用的Zset
 只有6个命令
 - geoadd，添加地理位置： geoadd keyname 经度 纬度 位置名称
   - 将指定的地理空间位置（经度、纬度、名称）添加到指定的key中
