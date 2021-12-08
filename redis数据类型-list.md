@@ -1,6 +1,16 @@
 # List
 在redis里面，我们可以把list玩成，栈，队列，阻塞队列  
 **所有的list命令都是用l/r开头的(头/尾插法)**  
+- 插入元素： lpush/rpush listname values，区别在于头插法还是尾插法
+- 查看list中的元素： lrange listname start end
+- 移除list中的元素： lpop/rpop listname [index]，没有index默认为头/尾元素
+- 查看list元素个数： llen listname
+- 移除列表的最后一个元素，将他移动到新的列表中： rpoplpush oldlist newlist
+- 判断是否存在指定键： exists listname
+- 获取指定索引的值：lindex listname index
+- 通过指定索引替换值：lset listname index value
+- 将某个具体的value插入到指定元素的前面或者后面  before/after ： linsert listname before/after witchone value
+
 ```bash
 127.0.0.1:6379> clear
 127.0.0.1:6379> LPUSH list one     # 将一个值或者多个值，插入到列表头(左)部
