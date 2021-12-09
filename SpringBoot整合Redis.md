@@ -470,6 +470,9 @@ public class RedisUtils {
 "\"{\\\"name\\\":\\\"\xe5\x8d\x83\xe7\x8f\x8f\\\",\\\"age\\\":1500}\""
 ```
 - 如何在get时取到它的中文呢？只需要在redis-cli 后面加上 –raw
+    - --raw参数的解释，其功能有两个：
+      1. 按数据原有格式打印数据，不展示额外的类型信息
+      2. 显示中文
 ```bash
 [root@VM-16-14-centos bin]# redis-cli -p 6379 --raw
 ```
