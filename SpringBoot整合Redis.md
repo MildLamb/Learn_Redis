@@ -105,22 +105,30 @@ class Redis02SpringbootApplicationTests {
 @Configuration
 public class RedisConfig {
     @Bean
-    @SuppressWarnings("all")
+//    @SuppressWarnings("all")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 
+        /**
+         * 上面这一部分写的是，如何完成序列化操作
+         */
         //Json序列化配置
-        Jackson2JsonRedisSerializer<Object> objectJackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
+        Jackson2JsonRedisSerializer<Object> objectJackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(Object.class);  //将接收的所有value转换为json对象
         ObjectMapper om = new ObjectMapper();
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+//        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+//        objectMapper.enableDefaultTyping()方法是发现被弃用。
+//        建议使用 objectMapper.activateDefaultTyping()方法替代它。
+        om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         objectJackson2JsonRedisSerializer.setObjectMapper(om);
-        //String的序列化
+        // String的序列化
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
 
 
-
+        /**
+         * 下面这一部分写的是，不同的情况选择哪种序列化方式
+         */
         // 配置具体的序列化方式
         // key采用string的序列化方式
         template.setKeySerializer(stringRedisSerializer);
@@ -128,10 +136,9 @@ public class RedisConfig {
         template.setHashKeySerializer(stringRedisSerializer);
         // value序列化方式采用jackson
         template.setValueSerializer(objectJackson2JsonRedisSerializer);
-        // hashd的value序列化方式采用jackson
+        // hash的value序列化方式采用jackson
         template.setHashKeySerializer(objectJackson2JsonRedisSerializer);
         template.afterPropertiesSet();
-
 
         return template;
     }
