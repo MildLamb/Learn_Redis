@@ -99,4 +99,42 @@ class Redis02SpringbootApplicationTests {
 
 # 自定义RedisTemplate传输User对象
 - 新版的springboot好像自动实现了对象的序列化，因此我测试的时候哪怕User对象没有实现Serializable接口依然可以传输成功，但任然还是建议实现Serializable接口
-- 
+- 自定义RedisTemplate
+```java
+//编写我们自己的redisTemplate
+@Configuration
+public class RedisConfig {
+    @Bean
+    @SuppressWarnings("all")
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+
+        //Json序列化配置
+        Jackson2JsonRedisSerializer<Object> objectJackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        objectJackson2JsonRedisSerializer.setObjectMapper(om);
+        //String的序列化
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+
+
+
+        // 配置具体的序列化方式
+        // key采用string的序列化方式
+        template.setKeySerializer(stringRedisSerializer);
+        // hash也采用string的序列化方式
+        template.setHashKeySerializer(stringRedisSerializer);
+        // value序列化方式采用jackson
+        template.setValueSerializer(objectJackson2JsonRedisSerializer);
+        // hashd的value序列化方式采用jackson
+        template.setHashKeySerializer(objectJackson2JsonRedisSerializer);
+        template.afterPropertiesSet();
+
+
+        return template;
+    }
+}
+
+```
