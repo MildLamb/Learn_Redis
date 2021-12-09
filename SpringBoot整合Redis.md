@@ -496,3 +496,18 @@ public class RedisUtils {
 127.0.0.1:6379> get user
 {"name":"千珏","age":1500}
 ```
+
+- fastjson进行json和java对象的转换
+```bash
+//Java对象转换成String类型的JSON字符串
+JSONObject.toJSONString(Java对象)
+ 
+//String类型的JSON字符串转换成Java对象
+JSONObject.toJavaObject(JSON字符串,Java对象.class)
+ 
+//Json字符串转换成JSONObject对象
+JSONObject.parseObject(JSON字符串)
+ 
+//JSON字符串转换成Java对象
+JSONObject.parseObject(JSON字符串,Java对象.class)
+```
