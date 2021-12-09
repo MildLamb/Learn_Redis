@@ -497,7 +497,7 @@ public class RedisUtils {
 {"name":"千珏","age":1500}
 ```
 
-- fastjson进行json和java对象的转换
+# fastjson进行json和java对象的转换
 ```bash
 //Java对象转换成String类型的JSON字符串
 JSONObject.toJSONString(Java对象)
