@@ -475,6 +475,21 @@ public class RedisUtils {
 ```
 - 重新获取就会发现，可以获取中文数据了
 ```bash
+# // value序列化方式采用jackson
+# template.setValueSerializer(objectJackson2JsonRedisSerializer);
+# // hash的value序列化方式采用jackson
+# template.setHashValueSerializer(objectJackson2JsonRedisSerializer);
+# 这是value采用jackson序列化后的存储结果
 127.0.0.1:6379> get user
 "{\"name\":\"千珏\",\"age\":1500}"
+```
+- 如果不想有转义字符，就把我们自定义的RedisTemplate类RedisConfig的value序列化模式改为string
+```bash
+# // value序列化方式采用string
+# template.setValueSerializer(stringRedisSerializer);
+# // hash的value序列化方式采用string
+# template.setHashValueSerializer(stringRedisSerializer);
+# 这是value采用string序列化后的存储结果
+127.0.0.1:6379> get user
+{"name":"千珏","age":1500}
 ```
