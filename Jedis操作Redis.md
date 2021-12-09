@@ -87,3 +87,36 @@ System.out.println("删除所有数据库中的所有key:" + jedis.flushAll());
 - Set
 - Hash
 - Zset
+
+# redis事务再理解
+- 1/0是运行时异常，出现异常会走catch中的取消事务，所以你的set都会失败了
+```java
+public class TestPing {
+    public static void main(String[] args) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Hello","World");
+        jsonObject.put("name","MildLamb");
+        String json = jsonObject.toJSONString();
+
+        // new Jedis 对象即可
+        Jedis jedis = new Jedis("150.158.46.233",6379);
+        jedis.auth("mildlambW2kindredwildwolfW2snowgnar");
+        jedis.flushDB();
+
+        Transaction multi = jedis.multi();
+        try {
+            multi.set("user1",json);
+            multi.set("user2",json);
+            int i = 1/0;
+            multi.exec();  //如果没有异常，执行事务
+            System.out.println(jedis.get("user1"));
+            System.out.println(jedis.get("user2"));
+        } catch (Exception e) {
+            multi.discard();  // 如果出现异常，放弃本次事务
+            e.printStackTrace();
+        } finally {
+            jedis.close();  //关闭客户端连接
+        }
+    }
+}
+```
