@@ -1,3 +1,6 @@
+# Redis持久化规则RDB和AOF
+- 两种都开启，优先使用AOF恢复数据
+
 # RDB
 ![image](https://user-images.githubusercontent.com/92672384/145511485-8075bd37-2c96-4cee-adeb-8d100768c715.png)
 - rdb保存的文件是 dump.rdb  
