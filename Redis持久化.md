@@ -1,6 +1,6 @@
 # RDB
 rdb保存的文件是 dump.rdb  
-触发机制：
+触发机制(备份生成dump.rdb文件)：
 1. save的规则满足的情况下，会自动触发rdb规则
 2. 执行flushall命令，也会触发我们的rdb规则
 3. 退出redis服务也会执行save
