@@ -879,6 +879,7 @@ requirepass yourredispassword
 ```
 
 ## AOF
+- redis默认是不开启aof模式的，默认使用rdb持久化，在大部分情况下，rdb已经都用了
 ```bash
 ############################## APPEND ONLY MODE ###############################
 
