@@ -879,7 +879,14 @@ requirepass yourredispassword
 ```
 
 ## AOF
-- redis默认是不开启aof模式的，默认使用rdb持久化，在大部分情况下，rdb已经都用了
+- appendonly no：不开启aof，redis默认是不开启aof模式的，默认使用rdb持久化，在大部分情况下，rdb已经都用了
+- appendfilename "appendonly.aof"： 持久化的文件的名字
+- 同步策略 appendfsync
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+  
+  
 ```bash
 ############################## APPEND ONLY MODE ###############################
 
