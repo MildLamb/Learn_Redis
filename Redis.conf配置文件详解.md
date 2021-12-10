@@ -562,3 +562,450 @@ replica-priority 100
 # replica-announce-ip 5.5.5.5
 # replica-announce-port 1234
 ```
+## 安全
+- 一定要给你的redis加密码，不然就是别人的矿机了
+```bash
+################################## SECURITY ###################################
+
+# Warning: since Redis is pretty fast an outside user can try up to
+# 1 million passwords per second against a modern box. This means that you
+# should use very strong passwords, otherwise they will be very easy to break.
+# Note that because the password is really a shared secret between the client
+# and the server, and should not be memorized by any human, the password
+# can be easily a long string from /dev/urandom or whatever, so by using a
+# long and unguessable password no brute force attack will be possible.
+
+# Redis ACL users are defined in the following format:
+#
+#   user <username> ... acl rules ...
+#
+# For example:
+#
+#   user worker +@list +@connection ~jobs:* on >ffa9203c493aa99
+#
+# The special username "default" is used for new connections. If this user
+# has the "nopass" rule, then new connections will be immediately authenticated
+# as the "default" user without the need of any password provided via the
+# AUTH command. Otherwise if the "default" user is not flagged with "nopass"
+# the connections will start in not authenticated state, and will require
+# AUTH (or the HELLO command AUTH option) in order to be authenticated and
+# start to work.
+#
+# The ACL rules that describe what an user can do are the following:
+#
+#  on           Enable the user: it is possible to authenticate as this user.
+#  off          Disable the user: it's no longer possible to authenticate
+#               with this user, however the already authenticated connections
+#               will still work.
+#  +<command>   Allow the execution of that command
+#  -<command>   Disallow the execution of that command
+#  +@<category> Allow the execution of all the commands in such category
+#               with valid categories are like @admin, @set, @sortedset, ...
+#               and so forth, see the full list in the server.c file where
+#               the Redis command table is described and defined.
+#               The special category @all means all the commands, but currently
+#               present in the server, and that will be loaded in the future
+#               via modules.
+#  +<command>|subcommand    Allow a specific subcommand of an otherwise
+#                           disabled command. Note that this form is not
+#                           allowed as negative like -DEBUG|SEGFAULT, but
+#                           only additive starting with "+".
+#  allcommands  Alias for +@all. Note that it implies the ability to execute
+#               all the future commands loaded via the modules system.
+#  nocommands   Alias for -@all.
+#  ~<pattern>   Add a pattern of keys that can be mentioned as part of
+#               commands. For instance ~* allows all the keys. The pattern
+#               is a glob-style pattern like the one of KEYS.
+#               It is possible to specify multiple patterns.
+#  allkeys      Alias for ~*
+#  resetkeys    Flush the list of allowed keys patterns.
+#  ><password>  Add this passowrd to the list of valid password for the user.
+#               For example >mypass will add "mypass" to the list.
+#               This directive clears the "nopass" flag (see later).
+#  <<password>  Remove this password from the list of valid passwords.
+#  nopass       All the set passwords of the user are removed, and the user
+#               is flagged as requiring no password: it means that every
+#               password will work against this user. If this directive is
+#               used for the default user, every new connection will be
+#               immediately authenticated with the default user without
+#               any explicit AUTH command required. Note that the "resetpass"
+#               directive will clear this condition.
+#  resetpass    Flush the list of allowed passwords. Moreover removes the
+#               "nopass" status. After "resetpass" the user has no associated
+#               passwords and there is no way to authenticate without adding
+#               some password (or setting it as "nopass" later).
+#  reset        Performs the following actions: resetpass, resetkeys, off,
+#               -@all. The user returns to the same state it has immediately
+#               after its creation.
+#
+# ACL rules can be specified in any order: for instance you can start with
+# passwords, then flags, or key patterns. However note that the additive
+# and subtractive rules will CHANGE MEANING depending on the ordering.
+# For instance see the following example:
+#
+#   user alice on +@all -DEBUG ~* >somepassword
+#
+# This will allow "alice" to use all the commands with the exception of the
+# DEBUG command, since +@all added all the commands to the set of the commands
+# alice can use, and later DEBUG was removed. However if we invert the order
+# of two ACL rules the result will be different:
+#
+#   user alice on -DEBUG +@all ~* >somepassword
+#
+# Now DEBUG was removed when alice had yet no commands in the set of allowed
+# commands, later all the commands are added, so the user will be able to
+# execute everything.
+#
+# Basically ACL rules are processed left-to-right.
+#
+# For more information about ACL configuration please refer to
+# the Redis web site at https://redis.io/topics/acl
+
+# ACL LOG
+#
+# The ACL Log tracks failed commands and authentication events associated
+# with ACLs. The ACL Log is useful to troubleshoot failed commands blocked 
+# by ACLs. The ACL Log is stored in memory. You can reclaim memory with 
+# ACL LOG RESET. Define the maximum entry length of the ACL Log below.
+acllog-max-len 128
+
+# Using an external ACL file
+#
+# Instead of configuring users here in this file, it is possible to use
+# a stand-alone file just listing users. The two methods cannot be mixed:
+# if you configure users here and at the same time you activate the exteranl
+# ACL file, the server will refuse to start.
+#
+# The format of the external ACL user file is exactly the same as the
+# format that is used inside redis.conf to describe users.
+#
+# aclfile /etc/redis/users.acl
+
+# IMPORTANT NOTE: starting with Redis 6 "requirepass" is just a compatiblity
+# layer on top of the new ACL system. The option effect will be just setting
+# the password for the default user. Clients will still authenticate using
+# AUTH <password> as usually, or more explicitly with AUTH default <password>
+# if they follow the new protocol: both will work.
+#
+requirepass mildlambW2kindredwildwolfW2snowgnar
+
+# Command renaming (DEPRECATED).
+#
+# ------------------------------------------------------------------------
+# WARNING: avoid using this option if possible. Instead use ACLs to remove
+# commands from the default user, and put them only in some admin user you
+# create for administrative purposes.
+# ------------------------------------------------------------------------
+#
+# It is possible to change the name of dangerous commands in a shared
+# environment. For instance the CONFIG command may be renamed into something
+# hard to guess so that it will still be available for internal-use tools
+# but not available for general clients.
+#
+# Example:
+#
+
+# IMPORTANT NOTE: starting with Redis 6 "requirepass" is just a compatiblity
+# layer on top of the new ACL system. The option effect will be just setting
+# the password for the default user. Clients will still authenticate using
+# AUTH <password> as usually, or more explicitly with AUTH default <password>
+# if they follow the new protocol: both will work.
+#
+requirepass yourredispassword
+
+# Command renaming (DEPRECATED).
+#
+# ------------------------------------------------------------------------
+# WARNING: avoid using this option if possible. Instead use ACLs to remove
+# commands from the default user, and put them only in some admin user you
+# create for administrative purposes.
+# ------------------------------------------------------------------------
+#
+# It is possible to change the name of dangerous commands in a shared
+# environment. For instance the CONFIG command may be renamed into something
+# hard to guess so that it will still be available for internal-use tools
+# but not available for general clients.
+#
+# Example:
+#
+# rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52
+#
+# It is also possible to completely kill a command by renaming it into
+# an empty string:
+#
+# rename-command CONFIG ""
+#
+# Please note that changing the name of commands that are logged into the
+# AOF file or transmitted to replicas may cause problems.
+```
+
+## 客户端限制
+- maxclients 10000 ：最大客户端个数
+```bash
+################################### CLIENTS ####################################
+
+# Set the max number of connected clients at the same time. By default
+# this limit is set to 10000 clients, however if the Redis server is not
+# able to configure the process file limit to allow for the specified limit
+# the max number of allowed clients is set to the current file limit
+# minus 32 (as Redis reserves a few file descriptors for internal uses).
+#
+# Once the limit is reached Redis will close all the new connections sending
+# an error 'max number of clients reached'.
+#
+# IMPORTANT: When Redis Cluster is used, the max number of connections is also
+# shared with the cluster bus: every node in the cluster will use two
+# connections, one incoming and another outgoing. It is important to size the
+# limit accordingly in case of very large clusters.
+#
+# maxclients 10000
+```
+
+## 内存管理
+- maxmemory <bytes> ：redis配置最大的内存容量
+- maxmemory-policy noeviction ：内存满以后的处理策略
+  1. volatile-lru：只对设置了过期时间的key进行LRU（默认值） 
+  2. allkeys-lru ： 删除LRU算法的key   
+  3. volatile-random：只限于设置了expire的部分，随机删除即将过期key   
+  4. allkeys-random：随机删除   
+  5. volatile-ttl ： 删除即将过期的   
+  6. noeviction ： 永不过期，返回错误
+```bash
+############################## MEMORY MANAGEMENT ################################
+
+# Set a memory usage limit to the specified amount of bytes.
+# When the memory limit is reached Redis will try to remove keys
+# according to the eviction policy selected (see maxmemory-policy).
+#
+# If Redis can't remove keys according to the policy, or if the policy is
+# set to 'noeviction', Redis will start to reply with errors to commands
+# that would use more memory, like SET, LPUSH, and so on, and will continue
+# to reply to read-only commands like GET.
+#
+# This option is usually useful when using Redis as an LRU or LFU cache, or to
+# set a hard memory limit for an instance (using the 'noeviction' policy).
+#
+# WARNING: If you have replicas attached to an instance with maxmemory on,
+# the size of the output buffers needed to feed the replicas are subtracted
+# from the used memory count, so that network problems / resyncs will
+# not trigger a loop where keys are evicted, and in turn the output
+# buffer of replicas is full with DELs of keys evicted triggering the deletion
+# of more keys, and so forth until the database is completely emptied.
+#
+# In short... if you have replicas attached it is suggested that you set a lower
+# limit for maxmemory so that there is some free RAM on the system for replica
+# output buffers (but this is not needed if the policy is 'noeviction').
+#
+# maxmemory <bytes>
+
+# MAXMEMORY POLICY: how Redis will select what to remove when maxmemory
+# is reached. You can select one from the following behaviors:
+#
+# volatile-lru -> Evict using approximated LRU, only keys with an expire set.
+# allkeys-lru -> Evict any key using approximated LRU.
+# volatile-lfu -> Evict using approximated LFU, only keys with an expire set.
+# allkeys-lfu -> Evict any key using approximated LFU.
+# volatile-random -> Remove a random key having an expire set.
+# allkeys-random -> Remove a random key, any key.
+# volatile-ttl -> Remove the key with the nearest expire time (minor TTL)
+# noeviction -> Don't evict anything, just return an error on write operations.
+#
+# LRU means Least Recently Used
+# LFU means Least Frequently Used
+#
+# Both LRU, LFU and volatile-ttl are implemented using approximated
+# randomized algorithms.
+#
+# Note: with any of the above policies, Redis will return an error on write
+#       operations, when there are no suitable keys for eviction.
+#
+#       At the date of writing these commands are: set setnx setex append
+#       incr decr rpush lpush rpushx lpushx linsert lset rpoplpush sadd
+#       sinter sinterstore sunion sunionstore sdiff sdiffstore zadd zincrby
+#       zunionstore zinterstore hset hsetnx hmset hincrby incrby decrby
+#       getset mset msetnx exec sort
+#
+# The default is:
+#
+# maxmemory-policy noeviction
+
+# LRU, LFU and minimal TTL algorithms are not precise algorithms but approximated
+# algorithms (in order to save memory), so you can tune it for speed or
+# accuracy. For default Redis will check five keys and pick the one that was
+# used less recently, you can change the sample size using the following
+# configuration directive.
+#
+# The default of 5 produces good enough results. 10 Approximates very closely
+# true LRU but costs more CPU. 3 is faster but not very accurate.
+#
+# maxmemory-samples 5
+
+# Starting from Redis 5, by default a replica will ignore its maxmemory setting
+# (unless it is promoted to master after a failover or manually). It means
+# that the eviction of keys will be just handled by the master, sending the
+# DEL commands to the replica as keys evict in the master side.
+#
+# This behavior ensures that masters and replicas stay consistent, and is usually
+# what you want, however if your replica is writable, or you want the replica
+# to have a different memory setting, and you are sure all the writes performed
+# to the replica are idempotent, then you may change this default (but be sure
+# to understand what you are doing).
+#
+# Note that since the replica by default does not evict, it may end using more
+# memory than the one set via maxmemory (there are certain buffers that may
+# be larger on the replica, or data structures may sometimes take more memory
+# and so forth). So make sure you monitor your replicas and make sure they
+# have enough memory to never hit a real out-of-memory condition before the
+# master hits the configured maxmemory setting.
+#
+# replica-ignore-maxmemory yes
+
+# Redis reclaims expired keys in two ways: upon access when those keys are
+# found to be expired, and also in background, in what is called the
+# "active expire key". The key space is slowly and interactively scanned
+# looking for expired keys to reclaim, so that it is possible to free memory
+# of keys that are expired and will never be accessed again in a short time.
+#
+# The default effort of the expire cycle will try to avoid having more than
+# ten percent of expired keys still in memory, and will try to avoid consuming
+# more than 25% of total memory and to add latency to the system. However
+# it is possible to increase the expire "effort" that is normally set to
+# "1", to a greater value, up to the value "10". At its maximum value the
+# system will use more CPU, longer cycles (and technically may introduce
+# more latency), and will tollerate less already expired keys still present
+# in the system. It's a tradeoff betweeen memory, CPU and latecy.
+#
+# active-expire-effort 1
+```
+
+## AOF
+```bash
+############################## APPEND ONLY MODE ###############################
+
+# By default Redis asynchronously dumps the dataset on disk. This mode is
+# good enough in many applications, but an issue with the Redis process or
+# a power outage may result into a few minutes of writes lost (depending on
+# the configured save points).
+#
+# The Append Only File is an alternative persistence mode that provides
+# much better durability. For instance using the default data fsync policy
+# (see later in the config file) Redis can lose just one second of writes in a
+# dramatic event like a server power outage, or a single write if something
+# wrong with the Redis process itself happens, but the operating system is
+# still running correctly.
+#
+# AOF and RDB persistence can be enabled at the same time without problems.
+# If the AOF is enabled on startup Redis will load the AOF, that is the file
+# with the better durability guarantees.
+#
+# Please check http://redis.io/topics/persistence for more information.
+
+appendonly no
+
+# The name of the append only file (default: "appendonly.aof")
+
+appendfilename "appendonly.aof"
+
+# The fsync() call tells the Operating System to actually write data on disk
+# instead of waiting for more data in the output buffer. Some OS will really flush
+# data on disk, some other OS will just try to do it ASAP.
+#
+# Redis supports three different modes:
+#
+# no: don't fsync, just let the OS flush the data when it wants. Faster.
+# always: fsync after every write to the append only log. Slow, Safest.
+# everysec: fsync only one time every second. Compromise.
+#
+# The default is "everysec", as that's usually the right compromise between
+# speed and data safety. It's up to you to understand if you can relax this to
+# "no" that will let the operating system flush the output buffer when
+# it wants, for better performances (but if you can live with the idea of
+# some data loss consider the default persistence mode that's snapshotting),
+# or on the contrary, use "always" that's very slow but a bit safer than
+# everysec.
+#
+# More details please check the following article:
+# http://antirez.com/post/redis-persistence-demystified.html
+#
+# If unsure, use "everysec".
+
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+
+# When the AOF fsync policy is set to always or everysec, and a background
+# saving process (a background save or AOF log background rewriting) is
+# performing a lot of I/O against the disk, in some Linux configurations
+# Redis may block too long on the fsync() call. Note that there is no fix for
+# this currently, as even performing fsync in a different thread will block
+# our synchronous write(2) call.
+#
+# In order to mitigate this problem it's possible to use the following option
+# that will prevent fsync() from being called in the main process while a
+# BGSAVE or BGREWRITEAOF is in progress.
+#
+# This means that while another child is saving, the durability of Redis is
+# the same as "appendfsync none". In practical terms, this means that it is
+# possible to lose up to 30 seconds of log in the worst scenario (with the
+# default Linux settings).
+#
+# If you have latency problems turn this to "yes". Otherwise leave it as
+# "no" that is the safest pick from the point of view of durability.
+
+no-appendfsync-on-rewrite no
+
+# Automatic rewrite of the append only file.
+# Redis is able to automatically rewrite the log file implicitly calling
+# BGREWRITEAOF when the AOF log size grows by the specified percentage.
+#
+# This is how it works: Redis remembers the size of the AOF file after the
+# latest rewrite (if no rewrite has happened since the restart, the size of
+# the AOF at startup is used).
+#
+# This base size is compared to the current size. If the current size is
+# bigger than the specified percentage, the rewrite is triggered. Also
+# you need to specify a minimal size for the AOF file to be rewritten, this
+# is useful to avoid rewriting the AOF file even if the percentage increase
+# is reached but it is still pretty small.
+#
+# Specify a percentage of zero in order to disable the automatic AOF
+# rewrite feature.
+
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+
+# An AOF file may be found to be truncated at the end during the Redis
+# startup process, when the AOF data gets loaded back into memory.
+# This may happen when the system where Redis is running
+# crashes, especially when an ext4 filesystem is mounted without the
+# data=ordered option (however this can't happen when Redis itself
+# crashes or aborts but the operating system still works correctly).
+#
+# Redis can either exit with an error when this happens, or load as much
+# data as possible (the default now) and start if the AOF file is found
+# to be truncated at the end. The following option controls this behavior.
+#
+# If aof-load-truncated is set to yes, a truncated AOF file is loaded and
+# the Redis server starts emitting a log to inform the user of the event.
+# Otherwise if the option is set to no, the server aborts with an error
+# and refuses to start. When the option is set to no, the user requires
+# to fix the AOF file using the "redis-check-aof" utility before to restart
+# the server.
+#
+# Note that if the AOF file will be found to be corrupted in the middle
+# the server will still exit with an error. This option only applies when
+# Redis will try to read more data from the AOF file but not enough bytes
+# will be found.
+aof-load-truncated yes
+
+# When rewriting the AOF file, Redis is able to use an RDB preamble in the
+# AOF file for faster rewrites and recoveries. When this option is turned
+# on the rewritten AOF file is composed of two different stanzas:
+#
+#   [RDB file][AOF tail]
+#
+# When loading Redis recognizes that the AOF file starts with the "REDIS"
+# string and loads the prefixed RDB file, and continues loading the AOF
+# tail.
+aof-use-rdb-preamble yes
+```
