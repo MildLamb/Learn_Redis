@@ -20,18 +20,30 @@
 
 
 # AOF(Append Only File)
-将我们的所有命令都记录下来，history，恢复的时候就把这个文件再执行一遍  
-aof保存的文件是  appendonly.aof  
-redis.conf 中默认是不开启的，需要手动开启   appendonly yes  
-如果aof文件有错误，这时候redis是启动不了的，我们需要修复aof文件  
-redis 给我们提供了一个工具  redis-check-aof
+- 将我们的所有命令(写操作的命令，读操作不记录)都记录下来，history，恢复的时候就把这个文件再执行一遍  
+- aof保存的文件是  appendonly.aof  
+- redis.conf 中默认是不开启的，需要手动开启   appendonly yes  
+- 如果aof文件有错误，这时候redis是启动不了的，我们需要修复aof文件  
+  - redis 给我们提供了一个工具  redis-check-aof
 ```bash
 [root@iZ2zedwea74ejj95zb9sh0Z bin]# redis-check-aof --fix appendonle.aof
 ```
+```bash
+[root@VM-16-14-centos bin]# redis-check-aof --fix appendonly.aof 
+0x              5e: Expected \r\n, got: 7633
+AOF analyzed: size=100, ok_up_to=52, diff=48
+This will shrink the AOF from 100 bytes, with 48 bytes, to 52 bytes
+Continue? [y/N]: y
+Successfully truncated AOF
+```
+
+## aof使用
+- 配置文件中将 appendonly 改为 yes，重启服务即可
 
 优点：  
-1. 每一次修改都同步，文件完整性会更好
-2. 默认每秒同步一次
+1. 每一次修改都同步，文件完整性会更好 # appendfsync always
+2. 默认每秒同步一次  # appendfsync everysec
+3. 从不同步，效率最高  # appendfsync no
 
 缺点：  
 1. 相对于数据rdb来说，aof大小远大于人多不，修复速度也比rdb慢
