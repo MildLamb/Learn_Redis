@@ -96,3 +96,24 @@ repl_backlog_size:1048576
 repl_backlog_first_byte_offset:1
 repl_backlog_histlen:56
 ```
+
+## 细节
+主机可以写，从机不可以写只能读，主机中的所有信息和数据，都会被从机自动保存
+```bash
+# 主机
+127.0.0.1:6379> keys *
+(empty array)
+127.0.0.1:6379> set name mildlamb
+OK
+127.0.0.1:6379> keys *
+1) "name"
+```
+```bash
+# 从机
+127.0.0.1:6380> keys *
+(empty array)
+127.0.0.1:6380> keys *
+1) "name"
+127.0.0.1:6380> set name wildwolf
+(error) READONLY You can't write against a read only replica.
+```
