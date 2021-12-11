@@ -37,3 +37,8 @@ Reading messages... (press Ctrl-C to quit)   # 消息提供者向频道发送消
 2) "kindred"
 3) "hello,redis"
 ```
+## 使用场景
+- 实时聊天系统
+- 实时消息系统
+- 订阅，关注系统
+- 复杂的场景我们可以使用消息中间件做 MQ
