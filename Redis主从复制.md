@@ -49,7 +49,8 @@ repl_backlog_histlen:0
 - 主从配置，我们一般只需要配置从机就好了,配置从机的命令：slaveof host poet
   - 如果主节点的服务器有密码，那么想要称为主节点的从节点需要在配置文件中配置一个属性：masterauth 主节点的密码
 - 这是以命令的方式实现主从复制，是暂时的，想要永久生效，就要修改配置文件
-  - 
+  - replicaof <masterip> <masterport>
+  - masterauth <master-password>
 
 
 
