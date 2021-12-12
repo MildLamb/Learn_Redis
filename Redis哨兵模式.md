@@ -46,3 +46,23 @@ sentinel monitor myredis 127.0.0.1 6379 1  # sentinel monitor 监控名称(随�
 4974:X 12 Dec 2021 11:12:47.073 # -failover-abort-no-good-slave master myredis 127.0.0.1 6379
 4974:X 12 Dec 2021 11:12:47.157 # Next failover delay: I will not start a failover before Sun Dec 12 11:18:47 2021
 ```
+- 如果master节点断开后，监控程序发送心跳包发现master宕机后，就会进行新的选举，我这里选举了6381为新的leader
+```bash
+7672:X 12 Dec 2021 11:23:29.750 # +try-failover master myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:29.755 # +vote-for-leader da5dd658feb0856ab1bb72fb70af32ec4410b6cf 2
+7672:X 12 Dec 2021 11:23:29.755 # +elected-leader master myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:29.755 # +failover-state-select-slave master myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:29.845 # +selected-slave slave 127.0.0.1:6381 127.0.0.1 6381 @ myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:29.845 * +failover-state-send-slaveof-noone slave 127.0.0.1:6381 127.0.0.1 6381 @ myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:29.928 * +failover-state-wait-promotion slave 127.0.0.1:6381 127.0.0.1 6381 @ myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:30.617 # +promoted-slave slave 127.0.0.1:6381 127.0.0.1 6381 @ myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:30.617 # +failover-state-reconf-slaves master myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:30.676 * +slave-reconf-sent slave 127.0.0.1:6380 127.0.0.1 6380 @ myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:31.676 * +slave-reconf-inprog slave 127.0.0.1:6380 127.0.0.1 6380 @ myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:31.676 * +slave-reconf-done slave 127.0.0.1:6380 127.0.0.1 6380 @ myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:31.728 # +failover-end master myredis 127.0.0.1 6379
+7672:X 12 Dec 2021 11:23:31.728 # +switch-master myredis 127.0.0.1 6379 127.0.0.1 6381
+7672:X 12 Dec 2021 11:23:31.729 * +slave slave 127.0.0.1:6380 127.0.0.1 6380 @ myredis 127.0.0.1 6381
+7672:X 12 Dec 2021 11:23:31.729 * +slave slave 127.0.0.1:6379 127.0.0.1 6379 @ myredis 127.0.0.1 6381
+7672:X 12 Dec 2021 11:24:01.807 # +sdown slave 127.0.0.1:6379 127.0.0.1 6379 @ myredis 127.0.0.1 6381
+```
