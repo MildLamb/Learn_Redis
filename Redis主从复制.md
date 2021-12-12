@@ -134,3 +134,20 @@ OK
 ```bash
 slaveof no one
 ```
+```bash
+127.0.0.1:6380> slaveof no  one
+OK
+127.0.0.1:6380> info replication
+# Replication
+role:master
+connected_slaves:1
+slave0:ip=127.0.0.1,port=6381,state=online,offset=115995,lag=0
+master_replid:3800c60ba63719f1899ffef56da18f78996b03f0
+master_replid2:d8d02d0fdcaac066aacaa74a99e5c0d808b38f15
+master_repl_offset:115995
+second_repl_offset:115996
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:664
+repl_backlog_histlen:115332
+```
