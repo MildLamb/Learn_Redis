@@ -4,7 +4,7 @@
 # 测试（当前模式，一主两从）
 - 创建一个配置文件 sentinel.conf,配置如下
 ```bash
-sentinel monitor myredis 127.0.0.1 6379 1  # sentinel monitor 监控名称(随意) 监视的ip 监视的端口 1(数字1表示，监视的端口如果发生了宕机，slave会进行投票选举新的主机)
+sentinel monitor myredis 127.0.0.1 6379 1  # sentinel monitor 监控名称(随意) 监视的ip 监视的端口 1(1代表只有一个或一个以上的哨兵认为主服务器不可用的时候，才会进行failover操作。)
 # 如果你监视的主机有密码，则需要配置， sentinel auth-pass 对应的监视名称 监视的redis服务的密码
 ```
 - 启动哨兵
