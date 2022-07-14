@@ -687,7 +687,7 @@ acllog-max-len 128
 # AUTH <password> as usually, or more explicitly with AUTH default <password>
 # if they follow the new protocol: both will work.
 #
-requirepass mildlambW2kindredwildwolfW2snowgnar
+requirepass myredispassword
 
 # Command renaming (DEPRECATED).
 #
